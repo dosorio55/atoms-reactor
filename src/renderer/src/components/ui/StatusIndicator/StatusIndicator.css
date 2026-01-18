@@ -1,0 +1,78 @@
+.status-indicator {
+  display: inline-block;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+/* Sizes */
+.status-indicator--sm {
+  width: 6px;
+  height: 6px;
+}
+
+.status-indicator--md {
+  width: 8px;
+  height: 8px;
+}
+
+.status-indicator--lg {
+  width: 10px;
+  height: 10px;
+}
+
+/* Status colors */
+.status-indicator--success {
+  background-color: var(--color-success);
+}
+
+.status-indicator--error {
+  background-color: var(--color-error);
+}
+
+.status-indicator--warning {
+  background-color: var(--color-warning);
+}
+
+.status-indicator--info {
+  background-color: var(--color-info);
+}
+
+.status-indicator--neutral {
+  background-color: var(--color-text-muted);
+}
+
+/* Pulse animation */
+.status-indicator--pulse {
+  animation: status-pulse 2s infinite;
+}
+
+@keyframes status-pulse {
+  0% {
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 1;
+  }
+  50% {
+    box-shadow: 0 0 0 4px currentColor;
+    opacity: 0.4;
+  }
+  100% {
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 1;
+  }
+}
+
+.status-indicator--success.status-indicator--pulse {
+  animation: status-pulse-success 2s infinite;
+}
+
+@keyframes status-pulse-success {
+  0% {
+    box-shadow: 0 0 0 0 var(--color-success);
+  }
+  50% {
+    box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 0 0 var(--color-success);
+  }
+}
