@@ -27,3 +27,6 @@ export type { StatusIndicatorProps } from './StatusIndicator'
 
 export { SearchBar } from './SearchBar'
 export type { SearchBarProps } from './SearchBar'
+
+export { GlassCard } from './GlassCard'
+export type { GlassCardProps } from './GlassCard'
