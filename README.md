@@ -1,4 +1,5 @@
-# atoms-reactor
+# Atoms
+### Reactor Core - AI Agentic automation program
 
 An Electron application with React and TypeScript
 
