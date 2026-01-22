@@ -7,7 +7,6 @@ interface DashboardLayoutProps {
 }
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
-  const [activeView, setActiveView] = useState('overview')
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
 
@@ -35,8 +34,6 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         collapsed={sidebarCollapsed}
         onToggleCollapse={handleToggleSidebar}
         isMobile={isMobile}
-        activeView={activeView}
-        onViewChange={setActiveView}
       />
 
       <div className="app-main">

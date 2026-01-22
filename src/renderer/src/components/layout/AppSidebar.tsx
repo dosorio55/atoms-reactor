@@ -8,24 +8,30 @@ import {
   ChevronLeftIcon,
   ChevronRightIcon
 } from '../icons'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 
 interface AppSidebarProps {
   collapsed: boolean
   onToggleCollapse: () => void
   isMobile: boolean
-  activeView: string
-  onViewChange: (view: string) => void
 }
 
 export const AppSidebar: React.FC<AppSidebarProps> = ({
   collapsed,
   onToggleCollapse,
-  isMobile,
-  activeView,
-  onViewChange
+  isMobile
 }) => {
   const [searchValue, setSearchValue] = useState('')
+  const location = useLocation()
+
+  const activeView: string = (() => {
+    const path = location.pathname
+    if (path === '/') return 'overview'
+    if (path === '/projects') return 'projects'
+    if (path === '/settings') return 'settings'
+    if (path === '/chats') return 'chats'
+    return ''
+  })()
 
   return (
     <Sidebar className={`app-sidebar ${collapsed ? 'collapsed' : ''}`}>
@@ -61,28 +67,22 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
 
       <SidebarSection label={collapsed ? '' : 'Main'}>
         <Link to="/">
-          <SidebarItem
-            icon={<HomeIcon />}
-            active={activeView === 'overview'}
-            onClick={() => onViewChange('overview')}
-          >
+          <SidebarItem icon={<HomeIcon />} active={activeView === 'overview'}>
             Overview
           </SidebarItem>
         </Link>
 
-        <SidebarItem
-          icon={<FolderIcon />}
-          active={activeView === 'projects'}
-          onClick={() => onViewChange('projects')}
-        >
+        <SidebarItem icon={<FolderIcon />} active={activeView === 'projects'}>
           Projects
         </SidebarItem>
+
+        <Link to="/chats">
+          <SidebarItem icon={<FolderIcon />} active={activeView === 'chats'}>
+            Chats
+          </SidebarItem>
+        </Link>
         <Link to="/settings">
-          <SidebarItem
-            icon={<SettingsIcon />}
-            active={activeView === 'settings'}
-            onClick={() => onViewChange('settings')}
-          >
+          <SidebarItem icon={<SettingsIcon />} active={activeView === 'settings'}>
             Settings
           </SidebarItem>
         </Link>

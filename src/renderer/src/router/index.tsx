@@ -1,8 +1,9 @@
 import { createHashRouter } from 'react-router-dom'
 import { RootLayout } from './RootLayout'
-import ComponentDemo from '../pages/ComponentDemo'
 import Home from '@renderer/pages/Home'
 import Settings from '@renderer/pages/Settings'
+import Chats from '@renderer/pages/Chats'
+import ComponentDemo from '@renderer/pages/ComponentDemo'
 
 export const router = createHashRouter([
   {
@@ -15,6 +16,10 @@ export const router = createHashRouter([
       {
         path: '/settings',
         element: <Settings />
+      },
+      {
+        path: '/chats',
+        element: <Chats />
       },
       {
         path: '/components',
