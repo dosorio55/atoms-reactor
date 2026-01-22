@@ -2,13 +2,13 @@ import React, { useState } from 'react'
 import { Sidebar, SidebarSection, SidebarItem, SearchBar, Avatar } from '../ui'
 import {
   HomeIcon,
-  ChartIcon,
   FolderIcon,
   SettingsIcon,
   AtomIcon,
   ChevronLeftIcon,
   ChevronRightIcon
 } from '../icons'
+import { Link } from 'react-router-dom'
 
 interface AppSidebarProps {
   collapsed: boolean
@@ -60,20 +60,16 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       )}
 
       <SidebarSection label={collapsed ? '' : 'Main'}>
-        <SidebarItem
-          icon={<HomeIcon />}
-          active={activeView === 'overview'}
-          onClick={() => onViewChange('overview')}
-        >
-          Overview
-        </SidebarItem>
-        <SidebarItem
-          icon={<ChartIcon />}
-          active={activeView === 'analytics'}
-          onClick={() => onViewChange('analytics')}
-        >
-          Analytics
-        </SidebarItem>
+        <Link to="/">
+          <SidebarItem
+            icon={<HomeIcon />}
+            active={activeView === 'overview'}
+            onClick={() => onViewChange('overview')}
+          >
+            Overview
+          </SidebarItem>
+        </Link>
+
         <SidebarItem
           icon={<FolderIcon />}
           active={activeView === 'projects'}
@@ -81,6 +77,15 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
         >
           Projects
         </SidebarItem>
+        <Link to="/settings">
+          <SidebarItem
+            icon={<SettingsIcon />}
+            active={activeView === 'settings'}
+            onClick={() => onViewChange('settings')}
+          >
+            Settings
+          </SidebarItem>
+        </Link>
       </SidebarSection>
 
       <SidebarSection label={collapsed ? '' : 'Workspaces'}>
