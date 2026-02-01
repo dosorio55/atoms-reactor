@@ -2,8 +2,8 @@ import { createHashRouter } from 'react-router-dom'
 import { RootLayout } from './RootLayout'
 import Home from '@renderer/pages/Home'
 import Settings from '@renderer/pages/Settings'
-import Chats from '@renderer/pages/Chats'
-import ComponentDemo from '@renderer/pages/ComponentDemo'
+import Chats from '@renderer/pages/chats/Chats'
+import ComponentDemo from '@renderer/pages/component demo/ComponentDemo'
 
 export const router = createHashRouter([
   {

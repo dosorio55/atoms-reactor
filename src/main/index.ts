@@ -1,4 +1,5 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
+import { mkdirSync } from 'fs'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
@@ -33,9 +34,22 @@ function createWindow(): void {
   } else {
     mainWindow.loadFile(join(__dirname, '../renderer/index.html'))
   }
+
+  // Open DevTools in development
+  if (is.dev) {
+    mainWindow.webContents.openDevTools()
+  }
 }
 
 app.commandLine.appendSwitch('no-sandbox')
+app.commandLine.appendSwitch('disable-dev-shm-usage')
+
+const tempDir = join(app.getPath('userData'), 'tmp')
+mkdirSync(tempDir, { recursive: true })
+app.setPath('temp', tempDir)
+process.env.TMPDIR = tempDir
+process.env.TMP = tempDir
+process.env.TEMP = tempDir
 
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.

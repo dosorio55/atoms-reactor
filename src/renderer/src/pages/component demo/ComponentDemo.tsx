@@ -18,7 +18,7 @@ import {
   SidebarItem,
   StatusIndicator,
   SearchBar
-} from '../components/ui'
+} from '../../components/ui'
 import './ComponentDemo.css'
 
 const PlusIcon = (): React.JSX.Element => (

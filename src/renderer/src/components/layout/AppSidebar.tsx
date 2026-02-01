@@ -34,7 +34,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   })()
 
   return (
-    <Sidebar className={`app-sidebar ${collapsed ? 'collapsed' : ''}`}>
+    <Sidebar collapsed={collapsed} className={`app-sidebar ${collapsed ? 'collapsed' : ''}`}>
       <div className="sidebar-header">
         <div className="sidebar-logo">
           <AtomIcon />
@@ -46,13 +46,14 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             onClick={onToggleCollapse}
             aria-label="Toggle sidebar"
             title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            type="button"
           >
             {collapsed ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </button>
         )}
       </div>
 
-      {!collapsed && (
+      {!collapsed ? (
         <div className="sidebar-search">
           <SearchBar
             placeholder="Search..."
@@ -63,7 +64,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             size="sm"
           />
         </div>
-      )}
+      ) : null}
 
       <SidebarSection label={collapsed ? '' : 'Main'}>
         <Link to="/">
@@ -71,11 +72,6 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             Overview
           </SidebarItem>
         </Link>
-
-        <SidebarItem icon={<FolderIcon />} active={activeView === 'projects'}>
-          Projects
-        </SidebarItem>
-
         <Link to="/chats">
           <SidebarItem icon={<FolderIcon />} active={activeView === 'chats'}>
             Chats

@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from 'react'
-import { Button, Input, Card, CardContent } from '../components/ui'
+import { Button, Input, Card, CardContent } from '../../components/ui'
+
+import './Chats.css'
 
 type ChatRole = 'user' | 'assistant'
 
@@ -67,26 +69,27 @@ function Chats(): React.JSX.Element {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, height: '100%' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, flex: 1, overflow: 'auto' }}>
+    <div className="chats">
+      <div className="chats__messages">
         {messages.map((m) => (
           <div
             key={m.id}
-            style={{
-              display: 'flex',
-              justifyContent: m.role === 'user' ? 'flex-end' : 'flex-start'
-            }}
+            className={
+              m.role === 'user'
+                ? 'chats__messageRow chats__messageRow--user'
+                : 'chats__messageRow chats__messageRow--assistant'
+            }
           >
-            <Card style={{ maxWidth: 720, width: 'fit-content' }}>
+            <Card className="chats__bubble">
               <CardContent>
-                <div style={{ whiteSpace: 'pre-wrap' }}>{m.content}</div>
+                <div className="chats__messageContent">{m.content}</div>
               </CardContent>
             </Card>
           </div>
         ))}
       </div>
 
-      <div style={{ display: 'flex', gap: 8 }}>
+      <div className="chats__composer">
         <Input
           placeholder="Enter message"
           value={input}
