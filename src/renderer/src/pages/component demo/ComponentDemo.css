@@ -122,3 +122,18 @@
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: var(--spacing-4);
 }
+
+.demo-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.demo-icon--sm {
+  width: 16px;
+  height: 16px;
+}
+
+.demo-icon--lg {
+  width: 20px;
+  height: 20px;
+}

@@ -1,5 +1,6 @@
-import React, { useMemo, useState } from 'react'
-import { Button, Input, Card, CardContent } from '../../components/ui'
+import React, { useMemo, useRef, useState } from 'react'
+import { Button, Card, CardContent } from '../../components/ui'
+import { ComposerToolbar } from './ComposerToolbar'
 
 import './Chats.css'
 
@@ -21,51 +22,77 @@ function Chats(): React.JSX.Element {
   ])
   const [input, setInput] = useState('')
   const [isSending, setIsSending] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [lastPrompt, setLastPrompt] = useState<string | null>(null)
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null)
 
-  const replyTemplates = useMemo(
-    () => [
-      "Got it. Here's a quick approach:",
-      'Here is a concise answer:',
-      'Let’s break it down:',
-      'Sure — here is what I would do:'
-    ],
-    []
-  )
+  const maxTextareaRows = 5
+  const maxTextareaHeight = useMemo(() => {
+    const lineHeight = 20
+    const verticalPadding = 18
+    return lineHeight * maxTextareaRows + verticalPadding
+  }, [maxTextareaRows])
 
-  const makeAssistantReply = (prompt: string): string => {
-    const header = replyTemplates[Math.floor(Math.random() * replyTemplates.length)]
-    const trimmed = prompt.trim()
-
-    if (!trimmed) return 'Send a message and I will reply.'
-
-    return `${header}\n\n${trimmed}\n\nIf you want, tell me what stack / constraints you have and I can tailor it.`
+  const resizeTextarea = (): void => {
+    if (!textareaRef.current) return
+    const el = textareaRef.current
+    el.style.height = 'auto'
+    const nextHeight = Math.min(el.scrollHeight, maxTextareaHeight)
+    el.style.height = `${nextHeight}px`
+    el.style.overflowY = el.scrollHeight > maxTextareaHeight ? 'auto' : 'hidden'
   }
 
-  const handleSend = async (): Promise<void> => {
-    const prompt = input.trim()
-    if (!prompt || isSending) return
+  const handleSend = async (prompt?: string): Promise<void> => {
+    const messageToSend = prompt || input.trim()
+    if (!messageToSend || isSending) return
 
     setInput('')
+    setError(null)
+    requestAnimationFrame(() => resizeTextarea())
 
     const userMessage: ChatMessage = {
       id: `u_${Date.now()}`,
       role: 'user',
-      content: prompt
+      content: messageToSend
     }
 
     setMessages((prev) => [...prev, userMessage])
+    setLastPrompt(messageToSend)
     setIsSending(true)
 
-    await new Promise((resolve) => setTimeout(resolve, 450))
+    try {
+      const response = await window.api.chat.sendMessage(messageToSend)
 
-    const assistantMessage: ChatMessage = {
-      id: `a_${Date.now()}`,
-      role: 'assistant',
-      content: makeAssistantReply(prompt)
+      if (response.success && response.data) {
+        const assistantMessage: ChatMessage = {
+          id: `a_${Date.now()}`,
+          role: 'assistant',
+          content: response.data
+        }
+        setMessages((prev) => [...prev, assistantMessage])
+        return
+      }
+
+      setError('Something went wrong. Please try again.')
+    } catch (err) {
+      setError('Something went wrong. Please try again.')
+
+      console.error(err)
+    } finally {
+      setIsSending(false)
     }
+  }
 
-    setMessages((prev) => [...prev, assistantMessage])
-    setIsSending(false)
+  const handleRetry = (): void => {
+    if (lastPrompt) {
+      void handleSend(lastPrompt)
+    }
+  }
+
+  const handleInputChange = (value: string): void => {
+    setInput(value)
+    setError(null)
+    requestAnimationFrame(() => resizeTextarea())
   }
 
   return (
@@ -87,21 +114,53 @@ function Chats(): React.JSX.Element {
             </Card>
           </div>
         ))}
+        {isSending && (
+          <div className="chats__messageRow chats__messageRow--assistant">
+            <Card className="chats__bubble">
+              <CardContent>
+                <div className="chats__loading">
+                  <span className="chats__loadingDot"></span>
+                  <span className="chats__loadingDot"></span>
+                  <span className="chats__loadingDot"></span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+        {error && (
+          <div className="chats__messageRow chats__messageRow--assistant">
+            <Card className="chats__bubble chats__bubble--error">
+              <CardContent>
+                <div className="chats__errorContent">
+                  <div className="chats__errorMessage">{error}</div>
+                  <Button onClick={handleRetry} disabled={isSending} variant="secondary">
+                    {isSending ? '...' : 'Retry'}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        )}
       </div>
 
       <div className="chats__composer">
-        <Input
-          placeholder="Enter message"
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter') void handleSend()
-          }}
-          fullWidth
-        />
-        <Button onClick={() => void handleSend()} disabled={!input.trim() || isSending}>
-          {isSending ? '...' : 'Send'}
-        </Button>
+        <div className="chats__composerCard">
+          <textarea
+            ref={textareaRef}
+            className="chats__composerInput"
+            placeholder="Send a message to the model..."
+            value={input}
+            onChange={(e) => handleInputChange(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey) {
+                e.preventDefault()
+                void handleSend()
+              }
+            }}
+            rows={1}
+          />
+          <ComposerToolbar input={input} isSending={isSending} onSend={handleSend} />
+        </div>
       </div>
     </div>
   )

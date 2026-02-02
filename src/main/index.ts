@@ -1,8 +1,14 @@
+import { config } from 'dotenv'
+
+// Load environment variables FIRST before any other imports that might use them
+config()
+
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
 import { mkdirSync } from 'fs'
 import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
+import { chatService } from './services/chatService'
 
 function createWindow(): void {
   // Create the browser window.
@@ -67,6 +73,33 @@ app.whenReady().then(() => {
 
   // IPC test
   ipcMain.on('ping', () => console.log('pong'))
+
+  // Chat IPC handlers
+  ipcMain.handle('chat:sendMessage', async (_event, message: string) => {
+    try {
+      const response = await chatService.sendMessage(message)
+      return { success: true, data: response }
+    } catch (error) {
+      console.error('Error in chat:sendMessage handler:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      }
+    }
+  })
+
+  ipcMain.handle('chat:clearHistory', async () => {
+    try {
+      chatService.clearHistory()
+      return { success: true }
+    } catch (error) {
+      console.error('Error in chat:clearHistory handler:', error)
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      }
+    }
+  })
 
   createWindow()
 
